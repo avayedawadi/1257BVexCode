@@ -24,7 +24,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::lcd::set_text(1, "Hello PROS User test!");
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -62,22 +62,23 @@ void autonomous() {
 	std::shared_ptr<OdomChassisController> drive =
 		ChassisControllerBuilder()
 				.withMotors(
-						1,  // Top left
-						-2, // Top right (reversed)
-						-3, // Bottom right (reversed)
-						4   // Bottom left
+						-11,  // Top left
+						20, // Top right (reversed)
+						19, // Bottom right (reversed)
+						-12   // Bottom left
 				)
-				// Green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
-				.withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
 				.withGains(
 					{0.001, 0, 0.0001}, // Distance controller gains
 					{0.001, 0, 0.0001}, // Turn controller gains
 					{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
 			)
+				// Green gearset, 3.5 inch wheel diameter, 10 inch wheelbase
+			.withDimensions(AbstractMotor::gearset::green,  {{3.25_in, 12.5_in}, imev5GreenTPR * (3.0/5.0)})
 			.withOdometry()
 			.buildOdometry();
 
 			drive->setState({0_in, 0_in, 0_deg});
+			drive->driveToPoint({1_ft, 1_ft});
 			drive->driveToPoint({1_ft, 1_ft});
 
 }
@@ -97,22 +98,28 @@ void autonomous() {
  */
 void opcontrol() {
 		Controller controller;
+		ADIButton rollerLimitSwitch('D');
+		Motor topRoller(-17);
+		Motor bottomRoller(-18);
+		ControllerButton rollerUpButton(ControllerDigital::A);
+    ControllerButton rollerDownButton(ControllerDigital::B);
 
 		std::shared_ptr<ChassisController> drive =
 			ChassisControllerBuilder()
 					.withMotors(
-							1,  // Top left
-							-2, // Top right (reversed)
-							-3, // Bottom right (reversed)
-							4   // Bottom left
+							-11,  // Top left
+							20, // Top right (reversed)
+							19, // Bottom right (reversed)
+							-12   // Bottom left
 					)
-					// Green gearset, 4 inch wheel diameter, 11.5 inch wheelbase
-					.withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
 					.withGains(
 						{0.001, 0, 0.0001}, // Distance controller gains
 						{0.001, 0, 0.0001}, // Turn controller gains
 						{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
-				)
+					)
+					// Green gearset, 3.25 inch wheel diameter, 10 inch wheelbase
+					.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 12.5_in}, imev5GreenTPR * (3.0/5.0)})
+
 				.build();
 
 
@@ -122,11 +129,26 @@ void opcontrol() {
 
 				while(true){
 					//XDrive go here
-					xModel->xArcade(controller.getAnalog(ControllerAnalog::leftY),
-                        controller.getAnalog(ControllerAnalog::leftX),
+					xModel->xArcade(controller.getAnalog(ControllerAnalog::leftX),
+                        controller.getAnalog(ControllerAnalog::leftY),
 												controller.getAnalog(ControllerAnalog::rightX));
 
+					static bool switcher = false;
+					if(roller)
+						if(switcher==true){
+							topRoller.moveVoltage(12000);
+							bottomRoller.moveVoltage(12000);
+						}
+						else{
+							topRoller.moveVoltage(-12000);
+							bottomRoller.moveVoltage(-12000);
+						}
+						switcher =!switcher;
+
+
 				pros::delay(20);
+
+
 
 			}
 
