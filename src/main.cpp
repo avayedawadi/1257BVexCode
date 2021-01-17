@@ -101,8 +101,8 @@ void opcontrol() {
 		ADIButton rollerLimitSwitch('D');
 		Motor topRoller(-17);
 		Motor bottomRoller(-18);
-		ControllerButton rollerUpButton(ControllerDigital::A);
-    ControllerButton rollerDownButton(ControllerDigital::B);
+		ControllerButton upRollerButton(ControllerDigital::A);
+		ControllerButton downRollerButton(ControllerDigital::B);
 
 		std::shared_ptr<ChassisController> drive =
 			ChassisControllerBuilder()
@@ -117,6 +117,10 @@ void opcontrol() {
 						{0.001, 0, 0.0001}, // Turn controller gains
 						{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
 					)
+					//Tune here
+					//double kP = 0.054;
+					//double kI = 0.043;
+					//double kD = 0.42;
 					// Green gearset, 3.25 inch wheel diameter, 10 inch wheelbase
 					.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 12.5_in}, imev5GreenTPR * (3.0/5.0)})
 
@@ -133,18 +137,82 @@ void opcontrol() {
                         controller.getAnalog(ControllerAnalog::leftY),
 												controller.getAnalog(ControllerAnalog::rightX));
 
+
 					static bool switcher = false;
-					if(roller)
+					static bool upRollerButtonStillPressed = false;
+					static bool limitSwitchStillPressed = false;
+					static bool downRollerButtonStillPressed = true;
+
+
+					if((upRollerButton.isPressed() && !upRollerButtonStillPressed)){
 						if(switcher==true){
 							topRoller.moveVoltage(12000);
 							bottomRoller.moveVoltage(12000);
 						}
 						else{
+							topRoller.moveVoltage(0);
+							bottomRoller.moveVoltage(0);
+						}
+						switcher =!switcher;
+					}
+
+					if(upRollerButton.isPressed()){
+						upRollerButtonStillPressed = true;
+					}else{
+						upRollerButtonStillPressed = false;
+					}
+
+					static bool firstLimitPress = false;
+
+					if(rollerLimitSwitch.isPressed() && !limitSwitchStillPressed)
+					{
+						topRoller.moveVoltage(0);
+						bottomRoller.moveVoltage(0);
+						switcher = !switcher;
+					}
+
+					if(rollerLimitSwitch.isPressed()){
+						firstLimitPress = true;
+						limitSwitchStillPressed = true;
+					}else{
+						limitSwitchStillPressed = false;
+					}
+
+
+
+
+					if((downRollerButton.isPressed() && !downRollerButtonStillPressed)){
+						if(switcher==true){
 							topRoller.moveVoltage(-12000);
 							bottomRoller.moveVoltage(-12000);
 						}
+						else{
+							topRoller.moveVoltage(0);
+							bottomRoller.moveVoltage(0);
+						}
 						switcher =!switcher;
+					}
 
+					if(upRollerButton.isPressed()){
+						downRollerButtonStillPressed = true;
+					}else{
+						downRollerButtonStillPressed = false;
+					}
+
+
+					if(rollerLimitSwitch.isPressed() && !limitSwitchStillPressed)
+					{
+						topRoller.moveVoltage(0);
+						bottomRoller.moveVoltage(0);
+						switcher = !switcher;
+					}
+
+					if(rollerLimitSwitch.isPressed()){
+						firstLimitPress = true;
+						limitSwitchStillPressed = true;
+					}else{
+						limitSwitchStillPressed = false;
+					}
 
 				pros::delay(20);
 
