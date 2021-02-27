@@ -67,19 +67,23 @@ void autonomous() {
 						19, // Bottom right (reversed)
 						-12   // Bottom left
 				)
-				.withGains(
-					{0.001, 0, 0.0001}, // Distance controller gains
+				/*.withGains(
+					{0.054, 0.043, 0.42}, // Distance controller gains
 					{0.001, 0, 0.0001}, // Turn controller gains
 					{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
-			)
+			)*/
+			//Tune here
+			//double kP = 0.054;
+			//double kI = 0.043;
+			//double kD = 0.42;
 				// Green gearset, 3.5 inch wheel diameter, 10 inch wheelbase
 			.withDimensions(AbstractMotor::gearset::green,  {{3.25_in, 12.5_in}, imev5GreenTPR * (3.0/5.0)})
 			.withOdometry()
 			.buildOdometry();
 
+			drive->setMaxVelocity(30);
 			drive->setState({0_in, 0_in, 0_deg});
-			drive->driveToPoint({1_ft, 1_ft});
-			drive->driveToPoint({1_ft, 1_ft});
+			drive->driveToPoint({2_ft, 0_ft});
 
 }
 
@@ -101,8 +105,14 @@ void opcontrol() {
 		ADIButton rollerLimitSwitch('D');
 		Motor topRoller(-17);
 		Motor bottomRoller(-18);
+		Motor rightIntake(-15);
+		Motor leftIntake(14);
 		ControllerButton upRollerButton(ControllerDigital::A);
 		ControllerButton downRollerButton(ControllerDigital::B);
+		ControllerButton autonmousButton(ControllerDigital::down);
+		ControllerButton forwardSuckButton(ControllerDigital::R1);
+		ControllerButton backwardSuckButton(ControllerDigital::R2);
+		ControllerButton backDownButton(ControllerDigital::X);
 
 		std::shared_ptr<ChassisController> drive =
 			ChassisControllerBuilder()
@@ -112,11 +122,11 @@ void opcontrol() {
 							19, // Bottom right (reversed)
 							-12   // Bottom left
 					)
-					.withGains(
-						{0.001, 0, 0.0001}, // Distance controller gains
-						{0.001, 0, 0.0001}, // Turn controller gains
-						{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
-					)
+					//.withGains(
+					//	{0.001, 0, 0.0001}, // Distance controller gains
+					//	{0.001, 0, 0.0001}, // Turn controller gains
+					//	{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
+					//)
 					//Tune here
 					//double kP = 0.054;
 					//double kI = 0.043;
@@ -184,7 +194,7 @@ void opcontrol() {
 					if((downRollerButton.isPressed() && !downRollerButtonStillPressed)){
 						if(switcher==true){
 							topRoller.moveVoltage(-12000);
-							bottomRoller.moveVoltage(-12000);
+							bottomRoller.moveVoltage(12000);
 						}
 						else{
 							topRoller.moveVoltage(0);
@@ -193,26 +203,38 @@ void opcontrol() {
 						switcher =!switcher;
 					}
 
-					if(upRollerButton.isPressed()){
+					if(downRollerButton.isPressed()){
 						downRollerButtonStillPressed = true;
 					}else{
 						downRollerButtonStillPressed = false;
 					}
 
-
-					if(rollerLimitSwitch.isPressed() && !limitSwitchStillPressed)
-					{
-						topRoller.moveVoltage(0);
-						bottomRoller.moveVoltage(0);
-						switcher = !switcher;
+					if(autonmousButton.isPressed()){
+						autonomous();
 					}
 
-					if(rollerLimitSwitch.isPressed()){
-						firstLimitPress = true;
-						limitSwitchStillPressed = true;
-					}else{
-						limitSwitchStillPressed = false;
+					if(forwardSuckButton.isPressed()){
+						rightIntake.moveVoltage(12000);
+						leftIntake.moveVoltage(12000);
 					}
+					else if(backwardSuckButton.isPressed()){
+						rightIntake.moveVoltage(-12000);
+						leftIntake.moveVoltage(-12000);
+					}
+					else{
+						rightIntake.moveVoltage(0);
+						leftIntake.moveVoltage(0);
+					}
+
+					if(backDownButton.isPressed()){
+						topRoller.moveVoltage(-12000);
+						bottomRoller.moveVoltage(-12000);
+					}
+
+
+
+
+
 
 				pros::delay(20);
 
