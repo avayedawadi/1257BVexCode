@@ -226,13 +226,10 @@ void opcontrol() {
 						leftIntake.moveVoltage(0);
 					}
 
-					if(backDownButton.isPressed()){
-						bottomRoller.moveVoltage(-12000);
-					}
-					else if(!upRollerButton.isPressed() || !downRollerButton.isPressed()){
-						bottomRoller.moveVoltage(0);
-					}
 
+					if(backDownButton.isPressed()){
+						bottomRoller.moveRelative(5.0, -100);
+					}
 
 
 
