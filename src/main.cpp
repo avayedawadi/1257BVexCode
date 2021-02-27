@@ -229,7 +229,7 @@ void opcontrol() {
 					if(backDownButton.isPressed()){
 						bottomRoller.moveVoltage(-12000);
 					}
-					else if(!upRollerButton.isPressed()){
+					else if(!upRollerButton.isPressed() && !downRollerButton.isPressed()){
 						bottomRoller.moveVoltage(0);
 					}
 
