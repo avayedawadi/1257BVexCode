@@ -23,6 +23,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	printf("hello");
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User test!");
 
@@ -103,24 +104,22 @@ void autonomous() {
 void opcontrol() {
 		Controller controller;
 		ADIButton rollerLimitSwitch('D');
-		Motor topRoller(-17);
-		Motor bottomRoller(-18);
-		Motor rightIntake(-15);
-		Motor leftIntake(14);
-		ControllerButton upRollerButton(ControllerDigital::A);
-		ControllerButton downRollerButton(ControllerDigital::B);
-		ControllerButton autonmousButton(ControllerDigital::down);
-		ControllerButton forwardSuckButton(ControllerDigital::R1);
-		ControllerButton backwardSuckButton(ControllerDigital::R2);
-		ControllerButton backDownButton(ControllerDigital::X);
+		Motor leftLift(10);
+		Motor rightLift(-3);
+		Motor leftFork(-17);
+		Motor rightFork(14);
+		ControllerButton armUpButton(ControllerDigital::L1);
+		ControllerButton armDownButton(ControllerDigital::L2);
+		ControllerButton forkUpButton(ControllerDigital::R1);
+		ControllerButton forkDownButton(ControllerDigital::R2);
 
 		std::shared_ptr<ChassisController> drive =
 			ChassisControllerBuilder()
 					.withMotors(
-							-11,  // Top left
-							20, // Top right (reversed)
-							19, // Bottom right (reversed)
-							-12   // Bottom left
+							{20,
+							9},
+							{-11,
+							-1}
 					)
 					//.withGains(
 					//	{0.001, 0, 0.0001}, // Distance controller gains
@@ -132,29 +131,52 @@ void opcontrol() {
 					//double kI = 0.043;
 					//double kD = 0.42;
 					// Green gearset, 3.25 inch wheel diameter, 10 inch wheelbase
-					.withDimensions(AbstractMotor::gearset::green, {{3.25_in, 12.5_in}, imev5GreenTPR * (3.0/5.0)})
+					.withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR})
 
 				.build();
 
 
 
 
-				auto xModel = std::dynamic_pointer_cast<XDriveModel>(drive->getModel());
+				//auto driveModel = std::dynamic_pointer_cast<TankDriveModel>(drive->getModel());
 
 				while(true){
 					//XDrive go here
-					xModel->xArcade(controller.getAnalog(ControllerAnalog::leftX),
+				/*	xModel->xArcade(controller.getAnalog(ControllerAnalog::leftX),
                         controller.getAnalog(ControllerAnalog::leftY),
-												controller.getAnalog(ControllerAnalog::rightX));
+												controller.getAnalog(ControllerAnalog::rightX));*/
+												drive->getModel()->tank(controller.getAnalog(ControllerAnalog::leftY),
+                            controller.getAnalog(ControllerAnalog::rightY));
 
 
-					static bool switcher = false;
-					static bool upRollerButtonStillPressed = false;
-					static bool limitSwitchStillPressed = false;
-					static bool downRollerButtonStillPressed = true;
 
+					if(armUpButton.isPressed()){
+						leftLift.moveVoltage(-4000);
+						rightLift.moveVoltage(-4000);
+					}
+					else if(armDownButton.isPressed()){
+						leftLift.moveVoltage(4000);
+						rightLift.moveVoltage(4000);
+					}
+					else{
+						leftLift.moveVoltage(0);
+						rightLift.moveVoltage(0);
+					}
 
-					if((upRollerButton.isPressed() && !upRollerButtonStillPressed)){
+					if(forkUpButton.isPressed()){
+						leftFork.moveVoltage(4000);
+						rightFork.moveVoltage(4000);
+					}
+					else if(forkDownButton.isPressed()){
+						leftFork.moveVoltage(-4000);
+						rightFork.moveVoltage(-4000);
+					}
+					else{
+						leftFork.moveVoltage(0);
+						rightFork.moveVoltage(0);
+					}
+
+					/*if((upRollerButton.isPressed() && !upRollerButtonStillPressed)){
 						if(switcher==true){
 							topRoller.moveVoltage(12000);
 							bottomRoller.moveVoltage(12000);
@@ -228,14 +250,14 @@ void opcontrol() {
 
 
 					if(backDownButton.isPressed()){
-						bottomRoller.moveRelative(-140, 100);
-					}
+						bottomRoller.moveRelative(-3000, 100);
+					}*/
 
 
 
 
 
-				pros::delay(20);
+				pros::delay(50);
 
 
 
