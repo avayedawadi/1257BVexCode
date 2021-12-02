@@ -104,10 +104,13 @@ void autonomous() {
 void opcontrol() {
 		Controller controller;
 		ADIButton rollerLimitSwitch('D');
-		Motor leftLift(10);
-		Motor rightLift(-3);
-		Motor leftFork(-17);
-		Motor rightFork(14);
+		//Motor rightLift(3);
+		Motor fork (4);
+		//Motor leftLift(8);
+		//const int LEFT_LIFT_MOTOR_PORT = 8;
+		//const int RIGHT_LIFT_MOTOR_PORT = 3;
+		//MotorGroup group1({8, -3});
+		Motor rightLift (-3);
 		ControllerButton armUpButton(ControllerDigital::L1);
 		ControllerButton armDownButton(ControllerDigital::L2);
 		ControllerButton forkUpButton(ControllerDigital::R1);
@@ -135,7 +138,17 @@ void opcontrol() {
 
 				.build();
 
+				//std::shared_ptr<AsyncPositionController<double, double>> liftControl =
+  			//AsyncPosControllerBuilder().withMotor(group1).build();
 
+				std::shared_ptr<AsyncPositionController<double, double>> forkControl =
+  			AsyncPosControllerBuilder().withMotor(fork).build();
+
+				//liftControl->setMaxVelocity(100);
+				forkControl->setMaxVelocity(100);
+
+
+				rightLift.setBrakeMode(AbstractMotor::brakeMode::hold);
 
 
 				//auto driveModel = std::dynamic_pointer_cast<TankDriveModel>(drive->getModel());
@@ -145,113 +158,28 @@ void opcontrol() {
 				/*	xModel->xArcade(controller.getAnalog(ControllerAnalog::leftX),
                         controller.getAnalog(ControllerAnalog::leftY),
 												controller.getAnalog(ControllerAnalog::rightX));*/
-												drive->getModel()->tank(controller.getAnalog(ControllerAnalog::leftY),
-                            controller.getAnalog(ControllerAnalog::rightY));
+												drive->getModel()->arcade(controller.getAnalog(ControllerAnalog::leftY),
+                            controller.getAnalog(ControllerAnalog::leftX));
+
+
+							rightLift.moveVelocity(controller.getAnalog(ControllerAnalog::rightY)*-100);
+
+
+				/*	if (armUpButton.changedToPressed()) {
+      liftControl->setTarget(-2600);
+    } else if (armDownButton.changedToPressed()) {
+      liftControl->setTarget(2);
+    }*/
+
+				if(forkDownButton.changedToPressed()){
+					forkControl->setTarget(-1000);
+				}
+				else if(forkUpButton.changedToPressed()){
+					forkControl->setTarget(2);
+				}
 
 
 
-					if(armUpButton.isPressed()){
-						leftLift.moveVoltage(-4000);
-						rightLift.moveVoltage(-4000);
-					}
-					else if(armDownButton.isPressed()){
-						leftLift.moveVoltage(4000);
-						rightLift.moveVoltage(4000);
-					}
-					else{
-						leftLift.moveVoltage(0);
-						rightLift.moveVoltage(0);
-					}
-
-					if(forkUpButton.isPressed()){
-						leftFork.moveVoltage(4000);
-						rightFork.moveVoltage(4000);
-					}
-					else if(forkDownButton.isPressed()){
-						leftFork.moveVoltage(-4000);
-						rightFork.moveVoltage(-4000);
-					}
-					else{
-						leftFork.moveVoltage(0);
-						rightFork.moveVoltage(0);
-					}
-
-					/*if((upRollerButton.isPressed() && !upRollerButtonStillPressed)){
-						if(switcher==true){
-							topRoller.moveVoltage(12000);
-							bottomRoller.moveVoltage(12000);
-						}
-						else{
-							topRoller.moveVoltage(0);
-							bottomRoller.moveVoltage(0);
-						}
-						switcher =!switcher;
-					}
-
-					if(upRollerButton.isPressed()){
-						upRollerButtonStillPressed = true;
-					}else{
-						upRollerButtonStillPressed = false;
-					}
-
-					static bool firstLimitPress = false;
-
-					if(rollerLimitSwitch.isPressed() && !limitSwitchStillPressed)
-					{
-						topRoller.moveVoltage(0);
-						bottomRoller.moveVoltage(0);
-						switcher = !switcher;
-					}
-
-					if(rollerLimitSwitch.isPressed()){
-						firstLimitPress = true;
-						limitSwitchStillPressed = true;
-					}else{
-						limitSwitchStillPressed = false;
-					}
-
-
-
-
-					if((downRollerButton.isPressed() && !downRollerButtonStillPressed)){
-						if(switcher==true){
-							topRoller.moveVoltage(-12000);
-							bottomRoller.moveVoltage(12000);
-						}
-						else{
-							topRoller.moveVoltage(0);
-							bottomRoller.moveVoltage(0);
-						}
-						switcher =!switcher;
-					}
-
-					if(downRollerButton.isPressed()){
-						downRollerButtonStillPressed = true;
-					}else{
-						downRollerButtonStillPressed = false;
-					}
-
-					if(autonmousButton.isPressed()){
-						autonomous();
-					}
-
-					if(forwardSuckButton.isPressed()){
-						rightIntake.moveVoltage(12000);
-						leftIntake.moveVoltage(12000);
-					}
-					else if(backwardSuckButton.isPressed()){
-						rightIntake.moveVoltage(-12000);
-						leftIntake.moveVoltage(-12000);
-					}
-					else{
-						rightIntake.moveVoltage(0);
-						leftIntake.moveVoltage(0);
-					}
-
-
-					if(backDownButton.isPressed()){
-						bottomRoller.moveRelative(-3000, 100);
-					}*/
 
 
 
