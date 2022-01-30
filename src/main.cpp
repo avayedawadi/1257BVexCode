@@ -1,5 +1,5 @@
 #include "main.h"
-
+#define DIGITAL_SENSOR_PORT 'A'
 /**
  * A callback function for LLEMU's center button.
  *
@@ -28,6 +28,9 @@ void initialize() {
 	pros::lcd::set_text(1, "Hello PROS User test!");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+
+	pros::ADIDigitalOut clamp (DIGITAL_SENSOR_PORT);
+
 }
 
 /**
@@ -60,31 +63,217 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	std::shared_ptr<OdomChassisController> drive =
+	//Motor fork (9);
+	//Motor rightLift (-3);
+
+std::shared_ptr<AsyncPositionController<double, double>> rightLift =
+  AsyncPosControllerBuilder()
+    .withMotor(3) // lift motor port 3
+    .build();
+		std::shared_ptr<AsyncPositionController<double, double>> leftLift =
+		  AsyncPosControllerBuilder()
+		    .withMotor(-8) // lift motor port 3
+		    .build();
+	std::shared_ptr<AsyncPositionController<double, double>> fork =
+		AsyncPosControllerBuilder()
+	    .withMotor(8)
+	    .build();
+	Motor intake(12);
+		Motor arm(20);
+	std::shared_ptr<ChassisController> drive =
 		ChassisControllerBuilder()
 				.withMotors(
-						-11,  // Top left
-						20, // Top right (reversed)
-						19, // Bottom right (reversed)
-						-12   // Bottom left
+					{2,
+					10},
+					{-6,
+					-7}
+
 				)
 				/*.withGains(
-					{0.054, 0.043, 0.42}, // Distance controller gains
-					{0.001, 0, 0.0001}, // Turn controller gains
-					{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
-			)*/
-			//Tune here
-			//double kP = 0.054;
-			//double kI = 0.043;
-			//double kD = 0.42;
+        {0.001, 0, 0}, // Distance controller gains
+        {0.001, 0, 0}, // Turn controller gains
+        {0.001, 0, 0}  // Angle controller gains (helps drive straight)
+    )*/
 				// Green gearset, 3.5 inch wheel diameter, 10 inch wheelbase
-			.withDimensions(AbstractMotor::gearset::green,  {{3.25_in, 12.5_in}, imev5GreenTPR * (3.0/5.0)})
-			.withOdometry()
-			.buildOdometry();
+			.withDimensions(AbstractMotor::gearset::green,  {{4_in, 17.5_in}, imev5GreenTPR})
+			.build();
 
-			drive->setMaxVelocity(30);
+			pros::ADIDigitalOut clamp(DIGITAL_SENSOR_PORT);
+
+			//skills with odom
+
+			drive->moveDistance(2_ft);
+			drive->turnAngle(-65_deg);
+
+
+
+
+			/*clamp.set_value(true);
+			pros::delay(1000);
+			clamp.set_value(false);*/
+
+
+
+ //skills
+ 			/*rightLift->setTarget(0);
+			leftLift->setTarget(0);
+			drive->setMaxVelocity(60);
+			drive->moveDistance(2_ft);
+			clamp.set_value(true);
+			rightLift->setTarget(2200);
+			leftLift->setTarget(2200);
+			drive->moveDistance(0.2_ft);
+			drive->turnAngle(-90_deg);
+			drive->moveDistance(-0.5_ft);
+			drive->moveDistance(0.5_ft);
+			drive->setMaxVelocity(80);
+			drive->moveDistance(2_ft);
+			drive->setMaxVelocity(60);
+			drive->turnAngle(88_deg);
+			drive->moveDistance(5_ft);
+			drive->moveDistance(-0.6_ft);
+			drive->turnAngle(-85_deg);
+			drive->moveDistance(-1.74_ft);
+			drive->moveDistance(6.75_ft);
+			drive->moveDistance(-1.8_ft);
+			drive->turnAngle(70_deg);
+			drive->moveDistance(-4_ft);
+			drive->moveDistance(5.8_ft);
+			//drive->moveDistance(2.85_ft);
+			rightLift->setTarget(1450);
+			leftLift->setTarget(1450);
+			rightLift->waitUntilSettled();
+			clamp.set_value(false);
+			rightLift->setTarget(2200);
+			leftLift->setTarget(2200);
+			drive->moveDistance(-0.4_ft);
+			drive->turnAngle(-86_deg);
+			drive->moveDistance(4_ft);*/
+
+			//Actual skills
+		/*	rightLift->setTarget(0);
+			leftLift->setTarget(0);
+			drive->setMaxVelocity(85);
+			drive->moveDistance(2_ft);
+			clamp.set_value(true);
+			drive->moveDistance(5_ft);
+			clamp.set_value(false);
+			drive->moveDistance(-1_ft);
+			drive->turnAngle(-65_deg);
+			drive->moveDistance(1.4_ft);
+			drive->turnAngle(-78_deg);
+			drive->moveDistance(3.5_ft);
+			drive->turnAngle(72_deg);
+			drive->moveDistance(2_ft);
+			drive->turnAngle(65_deg);
+			drive->moveDistance(2.5_ft);
+			drive->moveDistance(-0.5_ft);
+			drive->turnAngle(-35_deg);
+			drive->moveDistance(3.9_ft);
+			drive->turnAngle(-110_deg);
+			drive->moveDistance(-4_ft);
+			rightLift->setTarget(0);
+			leftLift->setTarget(0);
+			drive->moveDistance(2.5_ft);
+			drive->turnAngle(78_deg);
+			drive->moveDistance(1.5_ft);
+			clamp.set_value(true);
+			rightLift->setTarget(400);
+			leftLift->setTarget(400);
+			rightLift->waitUntilSettled();
+			drive->moveDistance(-2.5_ft);
+			rightLift->setTarget(2200);
+			leftLift->setTarget(2200);
+			rightLift->waitUntilSettled();
+			drive->moveDistance(0.8_ft);
+			drive->turnAngle(-75_deg);
+			drive->moveDistance(6_ft);
+			drive->moveDistance(-1_ft);
+			drive->turnAngle(-73_deg);
+			drive->moveDistance(3_ft);
+			drive->turnAngle(54_deg);
+			drive->moveDistance(1_ft);
+			rightLift->setTarget(1450);
+			leftLift->setTarget(1450);
+			rightLift->waitUntilSettled();
+			clamp.set_value(false);
+			rightLift->setTarget(2200);
+			leftLift->setTarget(2200);
+			drive->moveDistance(-0.4_ft);*/
+
+			/*clamp.set_value(true);
+			drive->moveDistance(-2_ft);
+			rightLift->setTarget(2200);
+			leftLift->setTarget(2200);*/
+
+
+			/*drive->moveDistance(-0.2_ft);
+			drive->turnAngle(-72_deg);
+			drive->moveDistance(4_ft);
+			clamp.set_value(true);
+			drive->moveDistance(-2_ft);
+			rightLift->setTarget(2200);
+			leftLift->setTarget(2200);
+			drive->turnAngle(-88_deg);
+			drive->moveDistance(-2_ft);
+			drive->moveDistance(8_ft);
+			drive->moveDistance(-1_ft);*/
+
+
+
+			/*drive->turnAngle(100_deg);
+			rightLift->setTarget(-200);
+			rightLift->waitUntilSettled();
+			fork->setTarget(50);
+			drive->turnAngle(-40_deg);
+			drive->moveDistance(-8_ft);*/
+ //run auton for Front Red }
+			//Regular Auton
+			/*drive->moveDistance(4_ft);
+			drive->setMaxVelocity(50);
+			drive->moveDistance(2.5_ft);
+			fork->setTarget(350);
+			fork->waitUntilSettled();
+			drive->moveDistance(-4_ft);
+			fork->setTarget(50);
+			fork->waitUntilSettled();
+
+			drive->moveDistance(-2_ft);*/
+
+
+
+
+
+
+
+
+			//drive->moveDistance(-3_ft);
+			//drive->turnAngle(-40_deg);
+			//drive->moveDistance(-6_ft);
+
+			/*drive->setMaxVelocity(80);
+			drive->moveDistance(2_ft);
+			rightLift->setTarget(-1450);
+			fork->setTarget(50);
+			drive->moveDistance(-3_ft);
+			rightLift->setTarget(-30);
+			rightLift->waitUntilSettled();
+			drive->turnAngle(175_deg);
+			drive->moveDistance(-1_ft);
+			drive->moveDistance(1_ft);
+			drive->turnAngle(40_deg);
+			drive->moveDistance(6_ft);
+			drive */
+
+
+
+			/*drive->setMaxVelocity(30);
 			drive->setState({0_in, 0_in, 0_deg});
 			drive->driveToPoint({2_ft, 0_ft});
+			fork.moveAbsolute(-2000,50);
+			fork.moveAbsolute(2000,50);*/
+
+
 
 }
 
@@ -102,53 +291,55 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+		bool hasRisenOnce = false;
 		Controller controller;
 		ADIButton rollerLimitSwitch('D');
 		//Motor rightLift(3);
-		Motor fork (4);
+		Motor leftLift(8);
 		//Motor leftLift(8);
 		//const int LEFT_LIFT_MOTOR_PORT = 8;
 		//const int RIGHT_LIFT_MOTOR_PORT = 3;
 		//MotorGroup group1({8, -3});
-		Motor rightLift (-3);
+		Motor rightLift (3);
+		Motor intake(12);
+		Motor arm(20);
 		ControllerButton armUpButton(ControllerDigital::L1);
 		ControllerButton armDownButton(ControllerDigital::L2);
-		ControllerButton forkUpButton(ControllerDigital::R1);
-		ControllerButton forkDownButton(ControllerDigital::R2);
+		ControllerButton intakeButton(ControllerDigital::A);
+		ControllerButton pneumaticsTrue(ControllerDigital::R2);
+		ControllerButton pneumaticsFalse(ControllerDigital::R1);
+		pros::ADIDigitalOut clamp(DIGITAL_SENSOR_PORT);
+		clamp.set_value(false);
 
 		std::shared_ptr<ChassisController> drive =
 			ChassisControllerBuilder()
 					.withMotors(
-							{20,
-							9},
-							{-11,
-							-1}
+							{2,
+							10},
+							{-6,
+							-7}
 					)
-					//.withGains(
-					//	{0.001, 0, 0.0001}, // Distance controller gains
-					//	{0.001, 0, 0.0001}, // Turn controller gains
-					//	{0.001, 0, 0.0001}  // Angle controller gains (helps drive straight)
-					//)
-					//Tune here
-					//double kP = 0.054;
-					//double kI = 0.043;
-					//double kD = 0.42;
 					// Green gearset, 3.25 inch wheel diameter, 10 inch wheelbase
-					.withDimensions(AbstractMotor::gearset::green, {{4_in, 18_in}, imev5GreenTPR})
+					.withDimensions(AbstractMotor::gearset::green, {{4_in, 17.5_in}, imev5GreenTPR})
 
 				.build();
+				drive->setMaxVelocity(80);
 
 				//std::shared_ptr<AsyncPositionController<double, double>> liftControl =
   			//AsyncPosControllerBuilder().withMotor(group1).build();
 
-				std::shared_ptr<AsyncPositionController<double, double>> forkControl =
-  			AsyncPosControllerBuilder().withMotor(fork).build();
+				//std::shared_ptr<AsyncPositionController<double, double>> forkControl =
+  			//AsyncPosControllerBuilder().withMotor(fork).build();
 
 				//liftControl->setMaxVelocity(100);
-				forkControl->setMaxVelocity(100);
+				//forkControl->setMaxVelocity(100);
+
+
 
 
 				rightLift.setBrakeMode(AbstractMotor::brakeMode::hold);
+				leftLift.setBrakeMode(AbstractMotor::brakeMode::hold);
+				arm.setBrakeMode(AbstractMotor::brakeMode::hold);
 
 
 				//auto driveModel = std::dynamic_pointer_cast<TankDriveModel>(drive->getModel());
@@ -158,11 +349,26 @@ void opcontrol() {
 				/*	xModel->xArcade(controller.getAnalog(ControllerAnalog::leftX),
                         controller.getAnalog(ControllerAnalog::leftY),
 												controller.getAnalog(ControllerAnalog::rightX));*/
+												if(rightLift.getPosition() > 20){
+													hasRisenOnce = true;
+												}
+
 												drive->getModel()->arcade(controller.getAnalog(ControllerAnalog::leftY),
                             controller.getAnalog(ControllerAnalog::leftX));
 
 
-							rightLift.moveVelocity(controller.getAnalog(ControllerAnalog::rightY)*-100);
+							if(hasRisenOnce && rightLift.getPosition() < 120 && controller.getAnalog(ControllerAnalog::rightY) < 0){
+								rightLift.moveVelocity(0);
+								leftLift.moveVelocity(0);
+							}
+							else if(hasRisenOnce && rightLift.getPosition() > 2000 && controller.getAnalog(ControllerAnalog::rightY) > 0){
+								rightLift.moveVelocity(0);
+								leftLift.moveVelocity(0);
+							}
+							else{
+							rightLift.moveVelocity(controller.getAnalog(ControllerAnalog::rightY)*650);
+							leftLift.moveVelocity(controller.getAnalog(ControllerAnalog::rightY)*-650);
+						}
 
 
 				/*	if (armUpButton.changedToPressed()) {
@@ -171,11 +377,28 @@ void opcontrol() {
       liftControl->setTarget(2);
     }*/
 
-				if(forkDownButton.changedToPressed()){
-					forkControl->setTarget(-1000);
+				if(intakeButton.isPressed()){
+					intake.moveVelocity(-100);
 				}
-				else if(forkUpButton.changedToPressed()){
-					forkControl->setTarget(2);
+				else{
+					intake.moveVelocity(0);
+				}
+
+				if(armDownButton.isPressed()){
+					arm.moveVelocity(-100);
+				}
+				else if(armUpButton.isPressed()){
+					arm.moveVelocity(100);
+				}
+				else{
+					arm.moveVelocity(0);
+				}
+
+				if(pneumaticsTrue.isPressed()){
+					clamp.set_value(true);
+				}
+				else if(pneumaticsFalse.isPressed()){
+					clamp.set_value(false);
 				}
 
 
