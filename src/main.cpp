@@ -90,9 +90,9 @@ std::shared_ptr<AsyncPositionController<double, double>> rightLift =
 
 				)
 				/*.withGains(
-        {0.001, 0, 0}, // Distance controller gains
-        {0.001, 0, 0}, // Turn controller gains
-        {0.001, 0, 0}  // Angle controller gains (helps drive straight)
+        {0.001, 0, 0.00004}, // Distance controller gains
+        {0.002, 0, 0.00008}, // Turn controller gains
+        {0.001, 0, 0.00004}  // Angle controller gains (helps drive straight)
     )*/
 				// Green gearset, 3.5 inch wheel diameter, 10 inch wheelbase
 			.withDimensions(AbstractMotor::gearset::green,  {{4_in, 17.5_in}, imev5GreenTPR})
@@ -102,8 +102,6 @@ std::shared_ptr<AsyncPositionController<double, double>> rightLift =
 
 			//skills with odom
 
-			drive->moveDistance(2_ft);
-			drive->turnAngle(-65_deg);
 
 
 
@@ -151,32 +149,44 @@ std::shared_ptr<AsyncPositionController<double, double>> rightLift =
 			drive->moveDistance(4_ft);*/
 
 			//Actual skills
-		/*	rightLift->setTarget(0);
+			rightLift->setTarget(0);
 			leftLift->setTarget(0);
-			drive->setMaxVelocity(85);
-			drive->moveDistance(2_ft);
-			clamp.set_value(true);
-			drive->moveDistance(5_ft);
+			drive->setMaxVelocity(100);
+			drive->moveDistance(7_ft);
 			clamp.set_value(false);
 			drive->moveDistance(-1_ft);
+			drive->setMaxVelocity(85);
 			drive->turnAngle(-65_deg);
+			drive->setMaxVelocity(100);
 			drive->moveDistance(1.4_ft);
+			drive->setMaxVelocity(85);
 			drive->turnAngle(-78_deg);
+			drive->setMaxVelocity(100);
 			drive->moveDistance(3.5_ft);
+			drive->setMaxVelocity(85);
 			drive->turnAngle(72_deg);
+			drive->setMaxVelocity(100);
 			drive->moveDistance(2_ft);
-			drive->turnAngle(65_deg);
+			drive->setMaxVelocity(85);
+			drive->turnAngle(61_deg);
+			drive->setMaxVelocity(100);
 			drive->moveDistance(2.5_ft);
 			drive->moveDistance(-0.5_ft);
-			drive->turnAngle(-35_deg);
-			drive->moveDistance(3.9_ft);
-			drive->turnAngle(-110_deg);
-			drive->moveDistance(-4_ft);
+			drive->setMaxVelocity(85);
+			drive->turnAngle(-50_deg);
+			drive->setMaxVelocity(100);
+			drive->moveDistance(3.2_ft);
+			drive->setMaxVelocity(85);
+			drive->turnAngle(-95_deg);
+			drive->setMaxVelocity(100);
+			drive->moveDistance(-4.2_ft);
 			rightLift->setTarget(0);
 			leftLift->setTarget(0);
 			drive->moveDistance(2.5_ft);
-			drive->turnAngle(78_deg);
-			drive->moveDistance(1.5_ft);
+			drive->setMaxVelocity(85);
+			drive->turnAngle(77_deg);
+			drive->setMaxVelocity(100);
+			drive->moveDistance(2_ft);
 			clamp.set_value(true);
 			rightLift->setTarget(400);
 			leftLift->setTarget(400);
@@ -186,92 +196,95 @@ std::shared_ptr<AsyncPositionController<double, double>> rightLift =
 			leftLift->setTarget(2200);
 			rightLift->waitUntilSettled();
 			drive->moveDistance(0.8_ft);
+			drive->setMaxVelocity(85);
 			drive->turnAngle(-75_deg);
-			drive->moveDistance(6_ft);
+			drive->setMaxVelocity(100);
+			drive->moveDistance(4_ft);
 			drive->moveDistance(-1_ft);
+			drive->setMaxVelocity(85);
 			drive->turnAngle(-73_deg);
+			drive->setMaxVelocity(100);
 			drive->moveDistance(3_ft);
-			drive->turnAngle(54_deg);
-			drive->moveDistance(1_ft);
+			drive->setMaxVelocity(85);
+			drive->turnAngle(67_deg);
+			drive->setMaxVelocity(100);
+			drive->moveDistance(3.4_ft);
 			rightLift->setTarget(1450);
 			leftLift->setTarget(1450);
 			rightLift->waitUntilSettled();
 			clamp.set_value(false);
 			rightLift->setTarget(2200);
 			leftLift->setTarget(2200);
-			drive->moveDistance(-0.4_ft);*/
-
-			/*clamp.set_value(true);
+			drive->setMaxVelocity(150);
+			drive->moveDistance(-0.4_ft);
 			drive->moveDistance(-2_ft);
-			rightLift->setTarget(2200);
-			leftLift->setTarget(2200);*/
-
-
-			/*drive->moveDistance(-0.2_ft);
-			drive->turnAngle(-72_deg);
-			drive->moveDistance(4_ft);
-			clamp.set_value(true);
-			drive->moveDistance(-2_ft);
-			rightLift->setTarget(2200);
-			leftLift->setTarget(2200);
-			drive->turnAngle(-88_deg);
-			drive->moveDistance(-2_ft);
-			drive->moveDistance(8_ft);
-			drive->moveDistance(-1_ft);*/
-
-
-
-			/*drive->turnAngle(100_deg);
-			rightLift->setTarget(-200);
-			rightLift->waitUntilSettled();
-			fork->setTarget(50);
-			drive->turnAngle(-40_deg);
-			drive->moveDistance(-8_ft);*/
- //run auton for Front Red }
-			//Regular Auton
-			/*drive->moveDistance(4_ft);
-			drive->setMaxVelocity(50);
+			drive->turnAngle(60_deg);
+			rightLift->setTarget(80);
+			leftLift->setTarget(80);
+			drive->moveDistance(3_ft);
+			drive->turnAngle(-65_deg);
+			drive->setMaxVelocity(200);
 			drive->moveDistance(2.5_ft);
-			fork->setTarget(350);
-			fork->waitUntilSettled();
-			drive->moveDistance(-4_ft);
-			fork->setTarget(50);
-			fork->waitUntilSettled();
+			clamp.set_value(true);
+			drive->moveDistance(-6_ft);
 
-			drive->moveDistance(-2_ft);*/
+			//Skills with pid
+			/*drive->setMaxVelocity(180);
+			rightLift->setTarget(100);
+				leftLift->setTarget(100);
+				drive->moveDistance(8_ft);
+				drive->moveDistance(-1_ft);
+				drive->turnAngle(-85_deg);
+				drive->moveDistance(2.4_ft);
+				drive->turnAngle(-85_deg);
+				drive->moveDistance(3.5_ft);
+				drive->turnAngle(90_deg);
+				drive->moveDistance(2.8_ft);
+				drive->turnAngle(100_deg);
+				drive->moveDistance(2.5_ft);
+				drive->moveDistance(-0.5_ft);
+				drive->turnAngle(-45_deg);
+				drive->moveDistance(3.9_ft);
+				drive->turnAngle(-110_deg);
+				drive->moveDistance(-4_ft);
+				drive->setMaxVelocity(140);
+				rightLift->setTarget(0);
+				leftLift->setTarget(0);
+				drive->moveDistance(2.5_ft);
+				drive->turnAngle(92_deg);
+				drive->moveDistance(1.5_ft);
+				clamp.set_value(true);
+				rightLift->setTarget(400);
+				leftLift->setTarget(400);
+				rightLift->waitUntilSettled();
+				drive->moveDistance(-2.5_ft);
+				rightLift->setTarget(2200);
+				leftLift->setTarget(2200);
+				rightLift->waitUntilSettled();
+				drive->moveDistance(0.8_ft);
+				drive->turnAngle(-90_deg);
+				drive->moveDistance(6_ft);
+				drive->moveDistance(-1_ft);
+				drive->turnAngle(-90_deg);
+				drive->moveDistance(3_ft);
+				drive->turnAngle(90_deg);
+				drive->moveDistance(1_ft);
+				rightLift->setTarget(1450);
+				leftLift->setTarget(1450);
+				rightLift->waitUntilSettled();
+				clamp.set_value(false);
+				rightLift->setTarget(2200);
+				leftLift->setTarget(2200);
+				drive->moveDistance(-0.4_ft);*/
 
+				/*drive->setMaxVelocity(140);
+				clamp.set_value(false);
+				drive->moveDistance(5_ft);
+				drive->turnAngle(-90_deg);
+				drive->moveDistance(2_ft);
+				drive->turnAngle(-90_deg);
+				drive->moveDistance(2_ft);*/
 
-
-
-
-
-
-
-			//drive->moveDistance(-3_ft);
-			//drive->turnAngle(-40_deg);
-			//drive->moveDistance(-6_ft);
-
-			/*drive->setMaxVelocity(80);
-			drive->moveDistance(2_ft);
-			rightLift->setTarget(-1450);
-			fork->setTarget(50);
-			drive->moveDistance(-3_ft);
-			rightLift->setTarget(-30);
-			rightLift->waitUntilSettled();
-			drive->turnAngle(175_deg);
-			drive->moveDistance(-1_ft);
-			drive->moveDistance(1_ft);
-			drive->turnAngle(40_deg);
-			drive->moveDistance(6_ft);
-			drive */
-
-
-
-			/*drive->setMaxVelocity(30);
-			drive->setState({0_in, 0_in, 0_deg});
-			drive->driveToPoint({2_ft, 0_ft});
-			fork.moveAbsolute(-2000,50);
-			fork.moveAbsolute(2000,50);*/
 
 
 
@@ -291,6 +304,7 @@ std::shared_ptr<AsyncPositionController<double, double>> rightLift =
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+		static bool buttonPressed = false;
 		bool hasRisenOnce = false;
 		Controller controller;
 		ADIButton rollerLimitSwitch('D');
@@ -308,6 +322,7 @@ void opcontrol() {
 		ControllerButton intakeButton(ControllerDigital::A);
 		ControllerButton pneumaticsTrue(ControllerDigital::R2);
 		ControllerButton pneumaticsFalse(ControllerDigital::R1);
+		ControllerButton hardStop(ControllerDigital::B);
 		pros::ADIDigitalOut clamp(DIGITAL_SENSOR_PORT);
 		clamp.set_value(false);
 
@@ -323,7 +338,6 @@ void opcontrol() {
 					.withDimensions(AbstractMotor::gearset::green, {{4_in, 17.5_in}, imev5GreenTPR})
 
 				.build();
-				drive->setMaxVelocity(80);
 
 				//std::shared_ptr<AsyncPositionController<double, double>> liftControl =
   			//AsyncPosControllerBuilder().withMotor(group1).build();
@@ -357,17 +371,21 @@ void opcontrol() {
                             controller.getAnalog(ControllerAnalog::leftX));
 
 
-							if(hasRisenOnce && rightLift.getPosition() < 120 && controller.getAnalog(ControllerAnalog::rightY) < 0){
+							if(!buttonPressed && hasRisenOnce && rightLift.getPosition() < 120 && controller.getAnalog(ControllerAnalog::rightY) < 0){
 								rightLift.moveVelocity(0);
 								leftLift.moveVelocity(0);
 							}
-							else if(hasRisenOnce && rightLift.getPosition() > 2000 && controller.getAnalog(ControllerAnalog::rightY) > 0){
+							else if(!buttonPressed && hasRisenOnce && rightLift.getPosition() > 2000 && controller.getAnalog(ControllerAnalog::rightY) > 0){
 								rightLift.moveVelocity(0);
 								leftLift.moveVelocity(0);
 							}
 							else{
 							rightLift.moveVelocity(controller.getAnalog(ControllerAnalog::rightY)*650);
 							leftLift.moveVelocity(controller.getAnalog(ControllerAnalog::rightY)*-650);
+						}
+
+						if(hardStop.isPressed()){
+							buttonPressed = true;
 						}
 
 
